@@ -18,16 +18,20 @@ function create() {
 
         //gui instance
   gui = new dat.GUI;    
-  gui.add(dudes,'spawnrate',0,200);
+  gui.add(dudes,'spawnrate',0,400);
 }
 
 function update() {
   counter++;
   if(counter>dudes.spawnrate){
     counter=0;
-    for(i=0;i<200/dudes.spawnrate;i++){
+    for(i=0;i<400/(dudes.spawnrate+1);i++){
       addSprite();      
     }
+  }
+
+  if(game.time.fps<10){
+    dudes.forEach(function(dude){dude.destroy()});
   }
   dudes.forEach(function(dude){dude.body.velocity.x+=0.08});
   game.physics.arcade.collide(dudes,dudes);
