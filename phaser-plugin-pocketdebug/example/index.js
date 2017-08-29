@@ -18,7 +18,8 @@ function create() {
 }
 
 function update() {
-  dudes.forEach(function(dude){dude.rotation+=0.08});
+  dudes.forEach(function(dude){dude.body.velocity.x+=0.08});
+  game.physics.arcade.collide(dudes,dudes);
 }
 
 function render() {
@@ -28,11 +29,16 @@ function addSprite(){
   if(game.time.fps>20){
     child=game.add.sprite(game.width*Math.random(),game.height*Math.random(),'dude');
     game.physics.arcade.enable(child);
+    child.body.velocity.x=Math.random()*1000;
+    child.body.velocity.y=Math.random()*1000;
+    
+    child.body.collideWorldBounds=true;
+    child.body.bounce.setTo(1);
+    
+
     dudes.add(child);
   }else{
     dudes.forEach(function(dude){dude.destroy()});
-    
-
   }
 
 }
