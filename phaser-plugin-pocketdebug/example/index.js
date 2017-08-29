@@ -9,18 +9,25 @@ function preload() {
 
 function create() {
   counter=0;
-  threshold=2000;
+  threshold=200;
   pocketdebug = game.plugins.add(Phaser.Plugin.PocketDebug);
   pocketdebug.add(10,0,1,200,61,"FPS");
   pocketdebug.add(10,150,1,100,100,"MS");  
   dudes=game.add.group();
+  dudes.threshold=200;
+
+        //gui instance
+  gui = new dat.GUI;    
+  gui.add(dudes,'spawnrate',0,200);
 }
 
 function update() {
   counter++;
-  if(counter>threshold){
+  if(counter>dudes.spawnrate){
     counter=0;
-    addSprite();
+    for(i=0;i<200/dudes.spawnrate;i++){
+      addSprite();      
+    }
   }
   dudes.forEach(function(dude){dude.body.velocity.x+=0.08});
   game.physics.arcade.collide(dudes,dudes);
