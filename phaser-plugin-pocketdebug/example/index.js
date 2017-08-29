@@ -14,7 +14,7 @@ function create() {
   pocketdebug.add(10,0,1,200,61,"FPS");
   pocketdebug.add(10,150,1,100,100,"MS");  
   dudes=game.add.group();
-  dudes.threshold=200;
+  dudes.spawnrate=200;
 
         //gui instance
   gui = new dat.GUI;    
