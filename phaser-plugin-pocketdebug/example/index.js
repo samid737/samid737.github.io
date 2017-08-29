@@ -12,7 +12,7 @@ function create() {
   pocketdebug.add(10,0,1,200,61,"FPS");
   pocketdebug.add(10,150,1,100,100,"MS");  
 
-  game.time.events.loop(200,addSprite,this);
+  game.time.events.loop(50,addSprite,this);
 
   dudes=game.add.group();
 }
