@@ -22999,14 +22999,25 @@ Phaser.Circle.intersectsLine=function(c,l,returnpoints){
   var y1=m*x1 +n;
   var p0= new Phaser.Point(x0,y0);
   var p1= new Phaser.Point(x1,y1);
+  var p0_exists=l.pointOnSegment(p0.x,p0.y,0.01);
+  var p1_exists=l.pointOnSegment(p1.x,p1.y,0.01);
   
-  if(l.pointOnSegment(p0.x,p0.y,0.01)||l.pointOnSegment(p1.x,p1.y,0))
+  if(p0_exists&&p1_exists)
   {
       return returnpoints?[p0,p1]:true;          
-    }else
-    {
+  }
+  else if(p0_exists)
+  {
+      return returnpoints?[p0]:true;
+  }
+  else if(p1_exists)
+  {
+      return returnpoints?[p1]:true;        
+  }
+  else
+  {
       return returnpoints?[]:false;
-    }
+  }
 };
 
 //   Because PIXI uses its own Circle, we'll replace it with ours to avoid duplicating code or confusion.
@@ -23355,20 +23366,30 @@ Phaser.Ellipse.intersectsLine=function(e,l,returnpoints){
   
     var x0=( h*(b*b)- m*(a*a) * (n-k) +  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
     var x1=( h*(b*b)- m*(a*a) * (n-k) -  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
-      
     var y0= m*x0 + n;
     var y1=m*x1 +n;
     var p0= new Phaser.Point(x0,y0);
     var p1= new Phaser.Point(x1,y1);
+    var p0_exists=l.pointOnSegment(p0.x,p0.y,0.01);
+    var p1_exists=l.pointOnSegment(p1.x,p1.y,0.01);
     
-    if(l.pointOnSegment(p0.x,p0.y,0.01)||l.pointOnSegment(p1.x,p1.y,0))
+    if(p0_exists&&p1_exists)
     {
         return returnpoints?[p0,p1]:true;          
-    }else
+    }
+    else if(p0_exists)
+    {
+        return returnpoints?[p0]:true;
+    }
+    else if(p1_exists)
+    {
+        return returnpoints?[p1]:true;        
+    }
+    else
     {
         return returnpoints?[]:false;
     }
-  };
+};
 
 //   Because PIXI uses its own Ellipse, we'll replace it with ours to avoid duplicating code or confusion.
 PIXI.Ellipse = Phaser.Ellipse;
