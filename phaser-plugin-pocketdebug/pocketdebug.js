@@ -19,8 +19,8 @@ PocketDebug.prototype.add = function(x,y,scale,refreshRate,maxY,label,input)
   this.gr=new Graph(game,x,y,scale,refreshRate,maxY,label);
   this.gr.node=document.createElement("pre"); 
   this.gr.mask=document.createElement("pre"); 
-  this.gr.node.setAttribute("style", "background-color: rgba(255, 40, 255, 0.6);text-decoration: underline; position: absolute;left:"+x+"px;top:"+y+"px;width:"+(32*10*this.gr.scale)+"px;text-align:justify;color: rgba(255, 234, 2, 1);font-weight:bold;font-size:"+14*this.gr.scale+"px");
-  this.gr.mask.setAttribute("style", ";position: absolute;left:"+x+"px;top:"+y+"px;width:"+(32*10*this.gr.scale)+"px;text-align:justify;color:rgba(158, 0, 158, 1);font-weight:normal;font-size:"+14*this.gr.scale+"px");  
+  this.gr.node.setAttribute("style", "background-color: rgba(255, 40, 255, 0.6);text-decoration: underline; position: absolute;left:"+x+"px;top:"+y+"px;width:"+(32*10*this.gr.scale)+"px;text-align:justify;color: rgba(255, 234, 2, 1);font-weight:normal;font-family:monospace;font-size:"+14*this.gr.scale+"px");
+  this.gr.mask.setAttribute("style", ";position: absolute;left:"+x+"px;top:"+y+"px;width:"+(32*10*this.gr.scale)+"px;text-align:justify;color:rgba(158, 0, 158, 1);font-weight:normal;font-family:monospace;font-size:"+14*this.gr.scale+"px");  
   this.game.canvas.parentNode.appendChild( this.gr.node); 
   this.game.canvas.parentNode.appendChild( this.gr.mask); 
   this.gr.mask.textContent=this.zeromask +"\n"+this.zeromask +"\n"+this.zeromask +"\n"+this.zeromask +"\n"+this.zeromask +"\n";
