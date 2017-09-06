@@ -1,15 +1,12 @@
 
-var globalbinary=0; 
-
 var PocketDebug =this.Phaser.Plugin.PocketDebug = function (game, parent)
 {
   Phaser.Plugin.call(this, game, parent);
   this.name="Phaser Pocket Debug Plugin";
   this.graphs={};
-  this.fastHexToRGB=function(hex,alpha)
-  {
-    return 'rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")";
-  }
+  this.fastHexToRGB=function(hex,alpha){
+    return 'rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")";//console.log('rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")");
+  };
 };
 
 Phaser.Plugin.PocketDebug.prototype = Object.create(Phaser.Plugin.prototype);
@@ -27,6 +24,8 @@ PocketDebug.prototype.addDOM=function(x,y,width,scale,maxY,bgcolor,UI,label,even
     this.element=document.createElement("pre"); 
     this.element.setAttribute("style","background-color:"+this.fastHexToRGB(bgcolor,0.6)+"; position: absolute;left:"+x+"px;top:"+y+"px;width:"+(width*scale)+"px;text-align:center;color:white;font-weight:bold;font-size:"+14*scale+"px");
     this.game.canvas.parentNode.appendChild( this.element); 
+    this.element.style["resize"]=UI?"":'both';
+    this.element.style["overflow"]=UI?"":'auto';    
     this.element.textContent=UI?label:0;      
     return this.element;
 };
@@ -34,10 +33,14 @@ PocketDebug.prototype.add = function(x,y,scale,maxY,refreshRate,label,input,bitM
 {
   this.gr=new Graph(this,game,x,y,scale,maxY,refreshRate,label,bitMode);
   this.gr.node=this.addDOM(x,y,340,scale,maxY,0xff00ff); 
-  this.gr.toggler=this.addDOM(x,y,40,scale,maxY,0xff0000,true,"--");
+  this.gr.toggler=this.addDOM(x,y,40,scale,maxY,0xffff00,true,"--");
+  this.gr.plus=this.addDOM(x,y+20,40,scale,maxY,0x00ff00,true,"+"); 
+  this.gr.minus=this.addDOM(x,y+40,40,scale,maxY,0xff0000,true,"-"); 
   this.gr.toggler.onclick=this.gr.toggle.bind(this.gr);
+  this.gr.plus.onclick=this.gr.resize.bind(this.gr,1);  
+  this.gr.minus.onclick=this.gr.resize.bind(this.gr,-1);  
   this.gr.node.onclick=this.gr.shiftHue.bind(this.gr);
-  this.graphs[this.gr.label]=this.gr;
+  this.graphs[this.gr.label]=this.gr; 
   return this.gr;
 };
 
@@ -59,7 +62,7 @@ PocketDebug.prototype.destroy = function()
 
 var Graph = function (debug,game,x,y,scale,maxY,refreshRate,label,bitMode)
 {
-  this.plugin=debug;this.game=game,this.scale=scale,this.refreshRate=refreshRate,this.maxY=maxY+1,this.label=label,this.hide=false;this.bitMode=bitMode;
+  this.plugin=debug;this.game=game,this.scale=scale,this.refreshRate=refreshRate,this.maxY=maxY+1,this.label=label,this.hide=false;this.bitMode=bitMode;this.fontSize=14;this.width=340*scale;this.dragging=-1;
   this.txtc=0xffffff;this.bgc=0xff00ff;this.mask=0x000016;  
   this.scanBinary=this.startBinary=0x010000000;this.zeros= Array(30).join("0"); this.counter=0;   
   this.line0=new Scanline(this,0);this.line1=new Scanline(this,1);
@@ -69,17 +72,16 @@ var Graph = function (debug,game,x,y,scale,maxY,refreshRate,label,bitMode)
 }
 
 Graph.prototype.draw =function()
-{
+{  
   this.counter=(this.counter+1)%this.refreshRate;
   if(!this.hide&&this.counter==0)
   {
     this.input=this.label=="FPS"?this.game.time.fps:this.game.time.elapsedMS;
     this.rownumber=~~((this.input)/(this.maxY/5));
     this.scanBinary=((this.scanBinary>>1))||this.startBinary;
-    this.result=this.line4.draw()+this.line3.draw()+this.line2.draw()+this.line1.draw()+this.line0.draw();
+    this.result=this.line4.draw()+'\n'+this.line3.draw()+'\n'+this.line2.draw()+'\n'+this.line1.draw()+'\n'+this.line0.draw()+'\n';
     this.result+=this.input+" "+this.label+ " DC: "+this.game.renderer.renderSession.drawCount;
     this.node.textContent=this.result;
-    this.result=null;
   }
 };
 
@@ -93,9 +95,16 @@ Graph.prototype.shiftHue=function()
 }
 
 Graph.prototype.toggle=function()
-{
+{  
   this.hide=!this.hide;
   this.node["hidden"]=this.hide;
+}
+
+Graph.prototype.resize=function(direction){
+  this.width+=40*direction;
+  this.fontSize+=1*direction;
+  this.node.style["fontSize"]=this.fontSize;
+  this.node.style["width"]=this.width;
 }
 
 var Scanline=function(gr,linenumber)

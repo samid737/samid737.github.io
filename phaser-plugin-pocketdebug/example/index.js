@@ -11,8 +11,6 @@ function create() {
   counter=0;
   threshold=200;
   pocketdebug = game.plugins.add(Phaser.Plugin.PocketDebug);
-  pocketdebug.add(10,0,1,200,61,"FPS");
-  pocketdebug.add(10,150,1,100,100,"MS");  
   dudes=game.add.group();
   dudes.spawnrate=200;
 
