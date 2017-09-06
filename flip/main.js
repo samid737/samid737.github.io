@@ -156,18 +156,30 @@ var flips=0;
 var player;
 var limit =Math.random()*1000+10;
 
+var ffmode= true;
+
 function create() {
- var txtStyle = {font: "20px Arial", fill: "#11af00", wordWrap: true, wordWrapWidth: game.width-200, align: "center"};    
- fliptext=game.add.text(game.world.centerX,32,"Flips:");
- cheers=game.add.text(game.world.centerX,120,"Fun flip 3000",txtStyle);
- cheers.anchor.setTo(0.5);
- game.stage.backgroundColor=0xffffff;
- book=game.add.sprite(game.width/2,game.height/2,'book');
- fliptext.anchor.setTo(0.5);
- book.anchor.setTo(0.5);
- book.scale.setTo(2);
- book.animations.add('flip');
- game.input.onDown.add(flip,this);
+    var txtStyle = {font: "20px Arial", fill: "#11af00", wordWrap: true, wordWrapWidth: game.width-200, align: "center"};    
+    fliptext=game.add.text(game.world.centerX,32,"Flips:");
+    cheers=game.add.text(game.world.centerX,120,"Fun flip 3000, select mode below",txtStyle);
+    cheers.anchor.setTo(0.5);
+    game.stage.backgroundColor=0xffffff;
+    book=game.add.sprite(game.width/2,game.height/2,'book');
+    fliptext.anchor.setTo(0.5);
+    book.anchor.setTo(0.5);
+    book.scale.setTo(2);
+    book.animations.add('flip');
+
+    factmode=game.add.text(game.world.centerX-300,game.height*0.9,"fact mode",txtStyle);
+    factmode.inputEnabled=true;
+    factmode.anchor.setTo(0.5);
+    factmode.events.onInputDown.add(function(){switchmode(true)},this);
+
+    infini=game.add.text(game.world.centerX+300,game.height*0.9,"Infiniflip mode",txtStyle);
+    infini.inputEnabled=true;
+    infini.anchor.setTo(0.5);
+    infini.events.onInputDown.add(function(){switchmode(false)},this);
+    game.input.onDown.add(flip,this);
 }
 
 function update() {
@@ -177,10 +189,22 @@ function render() {
 
 }
 
+function switchmode(themode){
+    ffmode=themode;
+    console.log(themode);
+    cheers.text=ffmode?"Fun fact mode":"Infiniflip";     
+}
+
 function flip(){
-    flips++;
     book.animations.play('flip', 50); 
-    fliptext.text="Flips:"+flips;    
-    cheers.text=facts[~~(Math.random()*facts.length-1)];    
-    game.camera.shake(flips/limit);
+    if(ffmode){
+        cheers.text=facts[~~(Math.random()*facts.length-1)]; 
+    }else{
+        flips++;   
+        fliptext.text="Flips:"+flips;    
+        game.camera.shake(flips/limit);
+        if(flips>limit){
+            game.destroy();            
+        }
+    }
 }
