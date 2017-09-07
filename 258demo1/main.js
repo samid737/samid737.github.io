@@ -6,7 +6,6 @@ function preload() {
     
 	//	Load our physics data exported from PhysicsEditor
 	game.load.physics('physicsData', 'assets/sprites.json');
-
 }
 
 var contra;
