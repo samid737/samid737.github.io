@@ -39,11 +39,10 @@ function create() {
     wizball.body.collideWorldBounds=true;
     wizball.body.velocity.x=wizball.body.velocity.y=-1000;
     capsule.body.clearShapes();
-    capsule.body.addCapsule(40,20,0,0,0);
+    capsule.body.addCapsule(40,20,0,0,-0.5);
 
     plane.body.clearShapes();
-    plane.body.addLine(40,0,0,0);
-    plane.body.velocity.y=-1000;
+    plane.body.addLine(40,0,0,1);
 
     //  Circle
     wizball.body.setCircle(45,0,0,Math.PI/6);
