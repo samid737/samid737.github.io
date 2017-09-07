@@ -4,19 +4,37 @@ var PocketDebug =this.Phaser.Plugin.PocketDebug = function (game, parent)
   Phaser.Plugin.call(this, game, parent);
   this.name="Phaser Pocket Debug Plugin";
   this.graphs={};
-  this.fastHexToRGB=function(hex,alpha){
-    return 'rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")";//console.log('rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")");
+  this.fastHexToRGB=function(hex,alpha){return 'rgba('+(hex>>16)+","+((hex>>8)&(0x0000ff))+","+(hex&0x0000ff)+","+alpha+")";
   };
+  this.tickTimings={lastStart:0,start:0,ms:0};
+
+  this.components={
+    state    : 0,
+    stage    : 0,
+    tweens   : 0,
+    sound    : 0,
+    input    : 0,
+    physics  : 0,
+    particles: 0,
+    plugins  : 0
+  },
+  this.timer = (window.performance ? window.performance : Date);
 };
 
 Phaser.Plugin.PocketDebug.prototype = Object.create(Phaser.Plugin.prototype);
 Phaser.Plugin.PocketDebug.prototype.constructor = Phaser.Plugin.PocketDebug;
 
 PocketDebug.prototype.init = function() 
-{
+{  
+  for (var component in this.components) {
+    this._wrap(this.game, component, "update", component);
+  }
   this.game.time.advancedTiming = true;
   this.add(10,0,1,60,10,"FPS",null);  
-  this.add(10,100,1,100,10,"MS",null);  
+  this.add(10,100,1,100,10,"MS",null); 
+  this.add(10,200,1,100,10,"physics",null); 
+  this.add(10,300,1,100,10,"input",null); 
+
 };
 
 PocketDebug.prototype.addDOM=function(x,y,width,scale,maxY,bgcolor,UI,label,event)
@@ -45,8 +63,11 @@ PocketDebug.prototype.add = function(x,y,scale,maxY,refreshRate,label,input,bitM
 };
 
 PocketDebug.prototype.update=function(){
-  this.graphs["FPS"].draw();
-  this.graphs["MS"].draw();
+  this.graphs["FPS"].draw(this.game.time.fps);
+  this.graphs["MS"].draw(this.game.time.totalElapsedSeconds());
+  this.graphs["physics"].draw(this.components["physics"]);
+  this.graphs["input"].draw(this.components["input"]);
+  this.graphs["input"].draw(this.components["input"]);  
 }
 
 PocketDebug.prototype.destroy = function()
@@ -60,6 +81,22 @@ PocketDebug.prototype.destroy = function()
   Phaser.Plugin.prototype.destroy.apply(this,arguments);        
 };
 
+
+PocketDebug.prototype._wrap = function (obj, component, method, timingStat) {
+  obj[component][method] = (function(self, name, method, stat, fn)
+  {    
+    var start = 0,end = 0;
+    return function () 
+    {
+      start = self.timer.now();
+      fn.apply(this, arguments);
+      end = self.timer.now();
+      self.components[stat] = end - start;//edit this for multi
+      console.log(end-start+name);
+    }
+  })(this, component, method, timingStat, obj[component][method]);
+};
+
 var Graph = function (debug,game,x,y,scale,maxY,refreshRate,label,bitMode)
 {
   this.plugin=debug;this.game=game,this.scale=scale,this.refreshRate=refreshRate,this.maxY=maxY+1,this.label=label,this.hide=false;this.bitMode=bitMode;this.fontSize=14;this.width=340*scale;this.dragging=-1;
@@ -71,12 +108,12 @@ var Graph = function (debug,game,x,y,scale,maxY,refreshRate,label,bitMode)
   return this;
 }
 
-Graph.prototype.draw =function()
+Graph.prototype.draw =function(input)
 {  
   this.counter=(this.counter+1)%this.refreshRate;
   if(!this.hide&&this.counter==0)
   {
-    this.input=this.label=="FPS"?this.game.time.fps:this.game.time.elapsedMS;
+    this.input=input;
     this.rownumber=~~((this.input)/(this.maxY/5));
     this.scanBinary=((this.scanBinary>>1))||this.startBinary;
     this.result=this.line4.draw()+'\n'+this.line3.draw()+'\n'+this.line2.draw()+'\n'+this.line1.draw()+'\n'+this.line0.draw()+'\n';
@@ -118,6 +155,5 @@ Scanline.prototype.draw=function()
   this.binary=this.gr.scanBinary==1?0:(this.gr.rownumber== this.linenumber?(this.gr.scanBinary^this.binary):(this.binary&~this.gr.scanBinary));//this.binary=this.gr.scanBinary; 
   this.n=this.binary.toString(2);
   this.n=this.gr.bitMode?(this.gr.zeros.substr( this.n.length)+ this.n):(this.gr.zeros.substr( this.n.length)+ this.n).replace(/0/g, "_").replace(/1/g, '*');
-  globalbinary=this.n;
   return this.n;
 }
