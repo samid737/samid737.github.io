@@ -22,12 +22,13 @@ function create() {
     
 	//	Enable the physics body on this sprite and turn on the visual debugger
 	game.physics.p2.enable([sprite1,contra], true);
-	sprite1.body.setCircle(40);
+	sprite1.body.setRectangle(50,100,0,0,1);
     sprite1.body.collideWorldBounds=true;
 
 	//	Clear the shapes and load the 'contra2' polygon from the physicsData JSON file in the cache
 	contra.body.clearShapes();
 	contra.body.loadPolygon('physicsData', 'contra2');
+	
 
 	//	Just starts it rotating
  	game.input.onDown.add(function() { start = true;	sprite1.body.velocity.x=500; sprite1.body.velocity.y=500;}, this);
