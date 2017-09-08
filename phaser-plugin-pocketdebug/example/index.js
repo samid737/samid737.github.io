@@ -10,7 +10,7 @@ function preload() {
 function create() {
   counter=0;
   threshold=200;
-  pocketdebug = game.plugins.add(Phaser.Plugin.PocketDebug);
+  pocketdebug = game.plugins.add(Phaser.Plugin.PocketDebug,0,0,1,true);
   dudes=game.add.group();
   dudes.spawnrate=200;
 
