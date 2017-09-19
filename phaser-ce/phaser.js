@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.8.5 "2017-08-30" - Built: Wed Aug 30 2017 16:40:20
+* v2.8.5 "2017-08-30" - Built: Wed Sep 13 2017 09:19:21
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -22979,45 +22979,45 @@ Phaser.Circle.intersectsRectangle = function (c, r) {
 * Checks if the given Circle and Line objects intersect.
 * @method Phaser.Circle.intersectsLine
 * @param {Phaser.Circle} c - The Circle object to test.
-* @param {Phaser.Line} l - The Rectangle object to test.
+* @param {Phaser.Line} l - The Line object to test.
 * @param {boolean} [returnpoints] - optional Array Object, Return an array of intersection points if true, otherwise return boolean.
 * @return {boolean} True if the two objects intersect, otherwise false.
 */
 Phaser.Circle.intersectsLine=function(c,l,returnpoints){
-  var h=c.x;
-  var k=c.y;
-  var m=((l.end.y-l.start.y)/(l.end.x-l.start.x));
-  var n= l.end.y- (m*l.end.x);
-  var a=c.radius;
-  var b=c.radius;
-  var del= n+m*h;
-
-  var x0=( h*(b*b)- m*(a*a) * (n-k) +  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
-  var x1=( h*(b*b)- m*(a*a) * (n-k) -  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
-    
-  var y0= m*x0 + n;
-  var y1=m*x1 +n;
-  var p0= new Phaser.Point(x0,y0);
-  var p1= new Phaser.Point(x1,y1);
-  var p0_exists=l.pointOnSegment(p0.x,p0.y,0.01);
-  var p1_exists=l.pointOnSegment(p1.x,p1.y,0.01);
+    var h=c.x;
+    var k=c.y;
+    var m=((l.end.y-l.start.y)/(l.end.x-l.start.x));
+    var n= l.end.y- (m*l.end.x);
+    var a=c.radius;
+    var b=c.radius;
+    var del= n+m*h;
   
-  if(p0_exists&&p1_exists)
-  {
-      return returnpoints?[p0,p1]:true;          
-  }
-  else if(p0_exists)
-  {
-      return returnpoints?[p0]:true;
-  }
-  else if(p1_exists)
-  {
-      return returnpoints?[p1]:true;        
-  }
-  else
-  {
-      return returnpoints?[]:false;
-  }
+    var x0=( h*(b*b)- m*(a*a) * (n-k) +  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
+    var x1=( h*(b*b)- m*(a*a) * (n-k) -  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
+      
+    var y0= m*x0 + n;
+    var y1=m*x1 +n;
+    var p0= new Phaser.Point(x0,y0);
+    var p1= new Phaser.Point(x1,y1);
+    var p0_exists=l.pointOnSegment(p0.x,p0.y,0.01);
+    var p1_exists=l.pointOnSegment(p1.x,p1.y,0.01);
+    
+    if(p0_exists&&p1_exists)
+    {
+        return returnpoints?[p0,p1]:true;          
+    }
+    else if(p0_exists)
+    {
+        return returnpoints?[p0]:true;
+    }
+    else if(p1_exists)
+    {
+        return returnpoints?[p1]:true;        
+    }
+    else
+    {
+        return returnpoints?[]:false;
+    }
 };
 
 //   Because PIXI uses its own Circle, we'll replace it with ours to avoid duplicating code or confusion.
@@ -23351,7 +23351,7 @@ Phaser.Ellipse.contains = function (a, x, y) {
 * Checks if the given Ellipse and Line objects intersect.
 * @method Phaser.Ellipse.intersectsLine
 * @param {Phaser.Ellipse} e - The Ellipse object to test.
-* @param {Phaser.Line} l - The Rectangle object to test.
+* @param {Phaser.Line} l - The Line object to test.
 * @param {boolean} [returnpoints] - optional Array Object, Return an array of intersection points if true, otherwise return boolean.
 * @return {boolean} True if the two objects intersect, otherwise false.
 */
@@ -23366,6 +23366,7 @@ Phaser.Ellipse.intersectsLine=function(e,l,returnpoints){
   
     var x0=( h*(b*b)- m*(a*a) * (n-k) +  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
     var x1=( h*(b*b)- m*(a*a) * (n-k) -  a*b* (Math.sqrt((a*a)*(m*m)+(b*b)-(del*del)-(k*k) + (2*del*k))))/((a*a)*(m*m)+(b*b));
+      
     var y0= m*x0 + n;
     var y1=m*x1 +n;
     var p0= new Phaser.Point(x0,y0);
@@ -37363,8 +37364,9 @@ Phaser.Mouse.prototype = {
         //  No matter what, we must cancel the left and right buttons
 
         this.input.mousePointer.stop(event);
-        this.input.mousePointer.leftButton.stop(event);
-        this.input.mousePointer.rightButton.stop(event);
+
+        // Clear the button states (again?)
+        this.input.mousePointer.resetButtons();
 
     },
 
@@ -37652,16 +37654,29 @@ Object.defineProperties(WheelEventProxy.prototype, {
 */
 
 /**
-* The MSPointer class handles Microsoft touch interactions with the game and the resulting Pointer objects.
+* The MSPointer class handles {@link https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events Pointer-event} interactions with the game via a dedicated {@link Phaser.Pointer}. (It's named after the nonstandard {@link https://msdn.microsoft.com/library/hh673557(v=vs.85).aspx MSPointerEvent} since that was the first browser implementation.)
 *
-* It will work only in Internet Explorer 10+ and Windows Store or Windows Phone 8 apps using JavaScript.
-* http://msdn.microsoft.com/en-us/library/ie/hh673557(v=vs.85).aspx
+* It's {@link http://caniuse.com/#feat=pointer currently supported  in IE 10+, Edge, Chrome (including Android), and Opera}.
 *
-* You should not normally access this class directly, but instead use a Phaser.Pointer object which
+* You should not normally access this class directly, but instead use a {@link Phaser.Pointer} object which
 * normalises all game input for you including accurate button handling.
 *
 * Please note that at the current time of writing Phaser does not yet support chorded button interactions:
 * http://www.w3.org/TR/pointerevents/#chorded-button-interactions
+*
+* You can disable Phaser's use of Pointer Events by either of two ways:
+*
+* ```javascript
+* // **Before** `new Phaser.Game(…)`:
+* Phaser.Device.onInitialized.add(function () {
+*     this.mspointer = false;
+* });
+* ```
+*
+* ```javascript
+* // Once, in the earliest State `init` or `create` callback (e.g., Boot):
+* this.input.mspointer.stop();
+* ```
 *
 * @class Phaser.MSPointer
 * @constructor
@@ -37701,7 +37716,7 @@ Phaser.MSPointer = function (game) {
     this.pointerUpCallback = null;
 
     /**
-    * @property {boolean} capture - If true the Pointer events will have event.preventDefault applied to them, if false they will propagate fully.
+    * @property {boolean} capture - If true the Pointer events will have event.preventDefault applied to them, canceling the corresponding MouseEvent or TouchEvent.
     */
     this.capture = true;
 
@@ -37714,15 +37729,15 @@ Phaser.MSPointer = function (game) {
     this.button = -1;
 
     /**
-    * The browser MSPointer DOM event. Will be null if no event has ever been received.
+    * The most recent PointerEvent from the browser. Will be null if no event has ever been received.
     * Access this property only inside a Pointer event handler and do not keep references to it.
-    * @property {MSPointerEvent|null} event
+    * @property {MSPointerEvent|PointerEvent|null} event
     * @default
     */
     this.event = null;
 
     /**
-    * MSPointer input will only be processed if enabled.
+    * PointerEvent input will only be processed if enabled.
     * @property {boolean} enabled
     * @default
     */
@@ -38312,6 +38327,29 @@ Phaser.DeviceButton.prototype = {
 
     },
 
+    /*
+    * Called automatically by Phaser.Pointer.
+    * Starts or stops button based on condition.
+    *
+    * @method Phaser.DeviceButton#startStop
+    * @protected
+    * @param {boolean} [condition] - The condition that decides between start or stop.
+    * @param {object} [event] - The DOM event that triggered the button change.
+    * @param {number} [value] - The button value. Only get for Gamepads.
+    */
+    startStop: function (condition, event, value) {
+
+        if (condition)
+        {
+            this.start(event, value);
+        }
+        else
+        {
+            this.stop(event, value);
+        }
+
+    },
+
     /**
     * Called automatically by Phaser.SinglePad.
     * 
@@ -38864,51 +38902,46 @@ Phaser.Pointer.prototype = {
     },
 
     /**
-    * Called by updateButtons.
+    * Called by processButtonsUpDown.
     *
     * @method Phaser.Pointer#processButtonsDown
     * @private
-    * @param {integer} buttons - {@link https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons MouseEvent#buttons} value.
+    * @param {integer} button - {@link https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button MouseEvent#button} value.
     * @param {MouseEvent} event - The DOM event.
     */
-    processButtonsDown: function (buttons, event) {
+    processButtonsDown: function (button, event) {
 
         //  Note: These are bitwise checks, not booleans
 
-        if (Phaser.Pointer.LEFT_BUTTON & buttons)
+        if (button === Phaser.Mouse.LEFT_BUTTON)
         {
             this.leftButton.start(event);
         }
 
-        if (Phaser.Pointer.RIGHT_BUTTON & buttons)
+        if (button === Phaser.Mouse.RIGHT_BUTTON)
         {
             this.rightButton.start(event);
         }
 
-        if (Phaser.Pointer.MIDDLE_BUTTON & buttons)
+        if (button === Phaser.Mouse.MIDDLE_BUTTON)
         {
             this.middleButton.start(event);
         }
 
-        if (Phaser.Pointer.BACK_BUTTON & buttons)
+        if (button === Phaser.Mouse.BACK_BUTTON)
         {
             this.backButton.start(event);
         }
 
-        if (Phaser.Pointer.FORWARD_BUTTON & buttons)
+        if (button === Phaser.Mouse.FORWARD_BUTTON)
         {
             this.forwardButton.start(event);
-        }
-
-        if (Phaser.Pointer.ERASER_BUTTON & buttons)
-        {
-            this.eraserButton.start(event);
         }
 
     },
 
     /**
-    * Called by updateButtons.
+    * Called by processButtonsUpDown.
     *
     * @method Phaser.Pointer#processButtonsUp
     * @private
@@ -38916,6 +38949,8 @@ Phaser.Pointer.prototype = {
     * @param {MouseEvent} event - The DOM event.
     */
     processButtonsUp: function (button, event) {
+
+        //  Note: These are bitwise checks, not booleans
 
         if (button === Phaser.Mouse.LEFT_BUTTON)
         {
@@ -38942,9 +38977,80 @@ Phaser.Pointer.prototype = {
             this.forwardButton.stop(event);
         }
 
-        if (button === 5)
+    },
+
+    /**
+    * Called by updateButtons.
+    *
+    * @method Phaser.Pointer#processButtonsUpDown
+    * @private
+    * @param {integer} buttons - {@link https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons MouseEvent#buttons} value.
+    * @param {MouseEvent} event - The DOM event.
+    */
+    processButtonsUpDown: function (buttons, event) {
+
+        var down = (event.type.toLowerCase().substr(-4) === 'down');
+        var move = (event.type.toLowerCase().substr(-4) === 'move');
+
+        if (buttons !== undefined)
         {
-            this.eraserButton.stop(event);
+            // On OS X (and other devices with trackpads) you have to press CTRL + the pad to initiate a right-click event.
+            if (down && buttons === 1 && event.ctrlKey)
+            {
+                buttons = 2;
+            }
+
+            // Note: These are bitwise checks, not booleans
+            this.leftButton.startStop(Phaser.Pointer.LEFT_BUTTON & buttons, event);
+            this.rightButton.startStop(Phaser.Pointer.RIGHT_BUTTON & buttons, event);
+            this.middleButton.startStop(Phaser.Pointer.MIDDLE_BUTTON & buttons, event);
+            this.backButton.startStop(Phaser.Pointer.BACK_BUTTON & buttons, event);
+            this.forwardButton.startStop(Phaser.Pointer.FORWARD_BUTTON & buttons, event);
+            this.eraserButton.startStop(Phaser.Pointer.ERASER_BUTTON & buttons, event);
+        }
+        else
+        {
+            // No buttons property (like Safari on OSX when using a trackpad)
+            // Attempt to use event.button property or fallback to default
+            if (event.button !== undefined)
+            {
+                // On OS X (and other devices with trackpads) you have to press CTRL + the pad to initiate a right-click event.
+                if (down && event.ctrlKey && event.button === 0)
+                {
+                    this.rightButton.start(event);
+                }
+                else
+                {
+                    if (down)
+                    {
+                        this.processButtonsDown(event.button, event);
+                    }
+                    else if (!move)
+                    {
+                        this.processButtonsUp(event.button, event);
+                    }
+                }
+            }
+            else
+            {
+                if (down)
+                {
+                    // On OS X (and other devices with trackpads) you have to press CTRL + the pad to initiate a right-click event.
+                    if (event.ctrlKey)
+                    {
+                        this.rightButton.start(event);
+                    }
+                    else
+                    {
+                        this.leftButton.start(event);
+                    }
+                }
+                else
+                {
+                    this.leftButton.stop(event);
+                    this.rightButton.stop(event);
+                }
+            }
         }
 
     },
@@ -38960,43 +39066,7 @@ Phaser.Pointer.prototype = {
     updateButtons: function (event) {
 
         this.button = event.button;
-
-        var down = (event.type.toLowerCase().substr(-4) === 'down');
-
-        if (event.buttons !== undefined)
-        {
-            if (down)
-            {
-                this.processButtonsDown(event.buttons, event);
-            }
-            else
-            {
-                this.processButtonsUp(event.button, event);
-            }
-        }
-        else
-        {
-            //  No buttons property (like Safari on OSX when using a trackpad)
-            if (down)
-            {
-                this.leftButton.start(event);
-            }
-            else
-            {
-                this.leftButton.stop(event);
-                this.rightButton.stop(event);
-            }
-        }
-
-        //  On OS X (and other devices with trackpads) you have to press CTRL + the pad
-        //  to initiate a right-click event, so we'll check for that here ONLY if
-        //  event.buttons = 1 (i.e. they only have a 1 button mouse or trackpad)
-
-        if (event.buttons === 1 && event.ctrlKey && this.leftButton.isDown)
-        {
-            this.leftButton.stop(event);
-            this.rightButton.start(event);
-        }
+        this.processButtonsUpDown(event.buttons, event);
 
         this.isUp = true;
         this.isDown = false;
@@ -39154,7 +39224,7 @@ Phaser.Pointer.prototype = {
             this.button = event.button;
         }
 
-        if (fromClick && this.isMouse)
+        if (this.isMouse)
         {
             this.updateButtons(event);
         }
@@ -78978,8 +79048,8 @@ Object.defineProperty(Phaser.Sound.prototype, "volume", {
 * There is a good guide to what's supported here: http://hpr.dogphilosophy.net/test/
 *
 * If you are reloading a Phaser Game on a page that never properly refreshes (such as in an AngularJS project) then you will quickly run out
-* of AudioContext nodes. If this is the case create a global var called PhaserGlobal on the window object before creating the game. The active
-* AudioContext will then be saved to window.PhaserGlobal.audioContext when the Phaser game is destroyed, and re-used when it starts again.
+* of AudioContext nodes. If this is the case create a global var called {@link PhaserGlobal} on the window object before creating the game. The active
+* AudioContext will then be saved to `window.PhaserGlobal.audioContext` when the Phaser game is destroyed, and re-used when it starts again.
 *
 * Mobile warning: There are some mobile devices (certain iPad 2 and iPad Mini revisions) that cannot play 48000 Hz audio.
 * When they try to play the audio becomes extremely distorted and buzzes, eventually crashing the sound system.
@@ -82926,11 +82996,11 @@ Phaser.Utils.Debug.prototype = {
     * Renders a Phaser geometry object including Rectangle, Circle, Ellipse, Point or Line.
     *
     * @method Phaser.Utils.Debug#geom
-    * @param {Phaser.Rectangle|Phaser.Circle|Phaser.Point|Phaser.Line} object - The geometry object to render.
+    * @param {Phaser.Rectangle|Phaser.Circle|Phaser.Ellipse|Phaser.Point|Phaser.Line} object - The geometry object to render.
     * @param {string} [color] - Color of the debug info to be rendered (format is css color string).
     * @param {boolean} [filled=true] - Render the objected as a filled (default, true) or a stroked (false)
-    * @param {number} [forceType=0] - Force rendering of a specific type. If 0 no type will be forced, otherwise 1 = Rectangle, 2 = Circle,3 = Ellipse, 4 = Point and 5 = Line.
-    */
+    * @param {number} [forceType=0] - Force rendering of a specific type. If 0 no type will be forced, otherwise 1 = Rectangle, 2 = Circle,3 = Point, 4 = Line and 5 = Ellipse.
+     */
     geom: function (object, color, filled, forceType) {
 
         if (filled === undefined) { filled = true; }
@@ -82970,26 +83040,11 @@ Phaser.Utils.Debug.prototype = {
                 this.context.stroke();
             }
         }
-        else if (object instanceof Phaser.Ellipse || forceType === 3)
-            {
-                this.context.beginPath();
-                this.context.ellipse(object.x - this.game.camera.x, object.y - this.game.camera.y, object.width/2, object.height/2, 0,2 * Math.PI,false);
-                this.context.closePath();
-    
-                if (filled)
-                {
-                    this.context.fill();
-                }
-                else
-                {
-                    this.context.stroke();
-                }
-            }
-        else if (object instanceof Phaser.Point || forceType === 4)
+        else if (object instanceof Phaser.Point || forceType === 3)
         {
             this.context.fillRect(object.x - this.game.camera.x, object.y - this.game.camera.y, 4, 4);
         }
-        else if (object instanceof Phaser.Line || forceType === 5)
+        else if (object instanceof Phaser.Line || forceType === 4)
         {
             this.context.beginPath();
             this.context.moveTo((object.start.x + 0.5) - this.game.camera.x, (object.start.y + 0.5) - this.game.camera.y);
@@ -82997,9 +83052,24 @@ Phaser.Utils.Debug.prototype = {
             this.context.closePath();
             this.context.stroke();
         }
+        else if (object instanceof Phaser.Ellipse || forceType === 5)
+        {
+            this.context.beginPath();
+            this.context.ellipse(object.x - this.game.camera.x, object.y - this.game.camera.y, object.width/2, object.height/2, 0,2 * Math.PI,false);
+            this.context.closePath();
+
+            if (filled)
+            {
+                this.context.fill();
+            }
+            else
+            {
+                this.context.stroke();
+            }
+        }
 
         this.stop();
-
+        
     },
 
     /**
@@ -86017,63 +86087,27 @@ Phaser.Color = {
 
     },
 
-/**
-* Interpolates the two given colours based on the supplied step and currentStep properties.
-*
-* @method Phaser.Color.interpolateColor
-* @static
-* @param {number} color1 - The first color value.
-* @param {number} color2 - The second color value.
-* @param {number} steps - The number of steps to run the interpolation over.
-* @param {number} currentStep - The currentStep value. If the interpolation will take 100 steps, a currentStep value of 50 would be half-way between the two.
-* @param {number} [colorSpace=0] - The color space to interpolate in. 0=RGB , 1=HSV.
-* @param {number} alpha - The alpha of the returned color.
-* @returns {number} The interpolated color value.
-*/
-interpolateColor: function (color1, color2, steps, currentStep, colorSpace,alpha) {
-    
+    /**
+    * Interpolates the two given colours based on the supplied step and currentStep properties.
+    *
+    * @method Phaser.Color.interpolateColor
+    * @static
+    * @param {number} color1 - The first color value.
+    * @param {number} color2 - The second color value.
+    * @param {number} steps - The number of steps to run the interpolation over.
+    * @param {number} currentStep - The currentStep value. If the interpolation will take 100 steps, a currentStep value of 50 would be half-way between the two.
+    * @param {number} alpha - The alpha of the returned color.
+    * @returns {number} The interpolated color value.
+    */
+    interpolateColor: function (color1, color2, steps, currentStep, alpha) {
+
         if (alpha === undefined) { alpha = 255; }
-        if (colorSpace === undefined) { colorSpace = 0; }
-        
+
         var src1 = Phaser.Color.getRGB(color1);
         var src2 = Phaser.Color.getRGB(color2);
-        
-        if(colorSpace==0){
-            var r = (((src2.red - src1.red) * currentStep) / steps) + src1.red;
-            var g = (((src2.green - src1.green) * currentStep) / steps) + src1.green;
-            var b = (((src2.blue - src1.blue) * currentStep) / steps) + src1.blue;
-        }
-
-        if(colorSpace==1){
-            var hsv1=Phaser.Color.RGBtoHSV(src1.r,src1.g,src1.b);
-            var hsv2=Phaser.Color.RGBtoHSV(src2.r,src2.g,src2.b);
-            var dh = hsv2.h - hsv1.h;
-            var h;
-
-            if (hsv1.h > hsv2.h){
-                var h3 = hsv2.h;
-                hsv2.h = hsv1.h;
-                hsv1.h = h3;
-                dh = -dh;
-                currentStep = steps - currentStep;
-            }
-
-            if (dh > 0.5){
-                hsv1.h = hsv1.h + 1; 
-                h =  (((hsv2.h-hsv1.h) * currentStep / steps) + hsv1.h)%1;
-            }
-            
-            if (dh <= 0.5){
-                h = ((hsv2.h-hsv1.h) * currentStep / steps) + hsv1.h;
-            }
-            var s=(((hsv2.s - hsv1.s) * currentStep) / steps) + hsv1.s;
-            var v=(((hsv2.v - hsv1.v) * currentStep) / steps) + hsv1.v;
-
-            var rgb= Phaser.Color.HSVtoRGB(h,s,v,rgb);
-            var r=rgb.r;
-            var g=rgb.g;
-            var b=rgb.b;             
-        }
+        var r = (((src2.red - src1.red) * currentStep) / steps) + src1.red;
+        var g = (((src2.green - src1.green) * currentStep) / steps) + src1.green;
+        var b = (((src2.blue - src1.blue) * currentStep) / steps) + src1.blue;
 
         return Phaser.Color.getColor32(alpha, r, g, b);
 
