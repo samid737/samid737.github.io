@@ -95556,23 +95556,21 @@
     
             if (lineWidth === undefined) { lineWidth = 1; }
             if (color === undefined) { color = 0x000000; }
-            c=Math.cos(angle);
-            s=Math.sin(angle);
-            ox= w/2;
-            oy=h/2;
+            c = Math.cos(angle);
+            s = Math.sin(-angle);
+ 
+            var oxc = w / 2 * c;
+            var oxs = w / 2 * s;
     
-            oxc=ox*c;
-            oxs=ox*s;
-    
-            oyc=oy*c;
-            oys=oy*s;
+            var oyc = h / 2 * c;
+            var oys = h / 2 * s;
     
             g.lineStyle(lineWidth, color, 1);
             g.beginFill(fillColor);
-            g.moveTo(x+(+oxc-oys),y+(-oxs-oyc));
-            g.lineTo(x-(-oxc-oys),y-(oxs-oyc));
-            g.lineTo(x+(-oxc+oys),y+(oxs+oyc));
-            g.lineTo(x-(oxc+oys),y-(-oxs+oyc));
+            g.moveTo(x + (oxc - oys), y + (-oxs - oyc));
+            g.lineTo(x - (- oxc - oys), y - (oxs - oyc));
+            g.lineTo(x + (- oxc + oys), y + (oxs + oyc));
+            g.lineTo(x - (oxc + oys), y - (- oxs + oyc));
         },
     
         /**
@@ -95607,8 +95605,8 @@
             if (color === undefined) { color = 0x000000; }
     
             g.lineStyle(lineWidth * 5, color, 1);
-            g.moveTo(-len / 2 *c, 0);
-            g.lineTo(len / 2 *c, len *s);
+            g.moveTo(-len / 2 * c, -len / 2 * s);
+            g.lineTo(len / 2 *c, len / 2* s);
     
         },
     
