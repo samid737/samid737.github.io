@@ -61,7 +61,9 @@ function createPreviewBounds(x, y, w, h) {
 
     //  If you want to use your own collision group then set it here and un-comment the lines below
     var mask = sim.boundsCollisionGroup.mask;
-
+ 
+    //customBounds.left = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: 1.5707963267948966 });
+    //customBounds.left = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: 1.57});
     customBounds.left = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: (-3 * Math.PI) / 2});
     
     customBounds.left.addShape(new p2.Plane());
