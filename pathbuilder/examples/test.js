@@ -1,5 +1,5 @@
 var config = {
-    type: Phaser.WEBGL,
+    type: Phaser.CANVAS,
     parent: 'phaser-example',
     scene: {
         preload: preload,
@@ -21,12 +21,13 @@ function preload()
     this.load.image('dude', 'assets/sprites/phaser-dude.png');
     this.load.json('data', 'assets/paths/data.json');
 
-    this.load.scenePlugin('PathBuilder', 'PathBuilder.min.js');
+    this.load.plugin('PathBuilder.min', "PathBuilder.min.js",'PathBuilder');
 
 }
 
 function create() 
 {
+    
     this.cameras.main.setBackgroundColor(0x11155);
 
     player = this.add.image(400, 300, 'dude').setScale(6, 6);
